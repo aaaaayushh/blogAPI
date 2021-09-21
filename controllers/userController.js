@@ -9,7 +9,7 @@ exports.signup = [
     .escape()
     .custom(async (username) => {
       try {
-        const existingUsername = await Author.findOne({ username: username });
+        const existingUsername = await User.findOne({ username: username });
         if (existingUsername) {
           throw new Error("Username already in use");
         }
@@ -44,3 +44,29 @@ exports.signup = [
     })(req, res, next);
   },
 ];
+
+exports.login = async (req, res, next) => {
+  passport.authenticate("login", async (err, user, info) => {
+    try {
+      if (err || !user) {
+        const error = new Error("error occured");
+        return next(error);
+      }
+      req.login(user, { session: false }, async (error) => {
+        if (error) return next(error);
+        const body = { _id: user._id, username: user.username };
+        const token = jwt.sign({ user: body }, process.env.SECRET, {
+          expiresIn: "1d",
+        });
+        return res.json({ user, token });
+      });
+    } catch (error) {
+      return next(error);
+    }
+  })(req, res, next);
+};
+
+exports.logout = function (req, res) {
+  req.logout();
+  res.redirect("/");
+};
