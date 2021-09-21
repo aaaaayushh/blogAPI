@@ -31,9 +31,28 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   postController.update_post
 );
+//delete post
 router.delete(
   "/posts/:id",
   passport.authenticate("jwt", { session: false }),
   postController.delete_post
+);
+
+//create comment
+router.post(
+  "/posts/:postid/comments",
+  passport.authenticate("jwt", { session: false }),
+  commentController.create_comment
+);
+router.get("/posts/:postid/comments", commentController.get_comments);
+router.put(
+  "/posts/:postid/comments/:commentid",
+  passport.authenticate("jwt", { session: false }),
+  commentController.update_comment
+);
+router.delete(
+  "/posts/:postid/comments/:commentid",
+  passport.authenticate("jwt", { session: false }),
+  commentController.delete_comment
 );
 module.exports = router;

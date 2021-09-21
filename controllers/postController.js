@@ -1,10 +1,12 @@
 const Post = require("../models/Post");
 const { body, validationResult } = require("express-validator");
+const User = require("../models/User");
+var mongoose = require("mongoose");
 
 exports.create_post = [
   body("title", "Empty title").trim().escape(),
   body("body", "empty body").trim().escape(),
-  (req, res, next) => {
+  async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.json({
@@ -20,6 +22,17 @@ exports.create_post = [
       body: req.body.body,
       author: req.user,
     });
+    // const user = await User.findById(req.user._id);
+    // console.log(user);
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $push: {
+          posts: post,
+        },
+      },
+      { new: true }
+    ).then(() => console.log("pushed"));
     post.save((err) => {
       if (err) {
         return next(err);
@@ -56,6 +69,16 @@ exports.get_single_post = async (req, res, next) => {
 exports.update_post = async (req, res, next) => {
   try {
     const { title, body } = req.body;
+    // const user = User.findById(req.user._id);
+    // await User.findOneAndUpdate(
+    //   { _id: req.user._id, "posts._id": req.params.id },
+    //   {
+    //     $set: {
+    //       "posts.$.title": title,
+    //       "posts.$.body": body,
+    //     },
+    //   }
+    // );
     const post = await Post.findByIdAndUpdate(req.params.id, {
       title,
       body,
