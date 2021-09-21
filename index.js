@@ -72,8 +72,7 @@ passport.use(
   )
 );
 
-var mongodb =
-  "mongodb+srv://aaaaayush:aayush@cluster0.71cwg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+var mongodb = `mongodb+srv://${process.env.username}:${process.env.password}@cluster0.71cwg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 mongoose.connect(mongodb, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "mongodb connection error"));

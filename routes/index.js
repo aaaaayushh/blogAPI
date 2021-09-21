@@ -25,4 +25,15 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   postController.create_post
 );
+//update post
+router.put(
+  "/posts/:id",
+  passport.authenticate("jwt", { session: false }),
+  postController.update_post
+);
+router.delete(
+  "/posts/:id",
+  passport.authenticate("jwt", { session: false }),
+  postController.delete_post
+);
 module.exports = router;
