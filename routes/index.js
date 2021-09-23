@@ -31,6 +31,11 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   postController.update_post
 );
+router.patch(
+  "/posts/:id",
+  passport.authenticate("jwt", { session: false }),
+  postController.publish_post
+);
 //delete post
 router.delete(
   "/posts/:id",

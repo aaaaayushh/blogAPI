@@ -22,8 +22,6 @@ exports.create_post = [
       body: req.body.body,
       author: req.user,
     });
-    // const user = await User.findById(req.user._id);
-    // console.log(user);
     await User.findOneAndUpdate(
       { _id: req.user._id },
       {
@@ -41,6 +39,19 @@ exports.create_post = [
     });
   },
 ];
+exports.publish_post = async (req, res, next) => {
+  try {
+    const post = await Post.findByIdAndUpdate(req.params.id, {
+      published: true,
+    });
+    if (!post) {
+      return res.status(404).json({ err: "post not found" });
+    }
+    return res.status(200).json({ msg: "post updated", post });
+  } catch (err) {
+    return next(err);
+  }
+};
 exports.get_posts = async (req, res, next) => {
   try {
     const posts = await Post.find({});
@@ -69,16 +80,6 @@ exports.get_single_post = async (req, res, next) => {
 exports.update_post = async (req, res, next) => {
   try {
     const { title, body } = req.body;
-    // const user = User.findById(req.user._id);
-    // await User.findOneAndUpdate(
-    //   { _id: req.user._id, "posts._id": req.params.id },
-    //   {
-    //     $set: {
-    //       "posts.$.title": title,
-    //       "posts.$.body": body,
-    //     },
-    //   }
-    // );
     const post = await Post.findByIdAndUpdate(req.params.id, {
       title,
       body,
